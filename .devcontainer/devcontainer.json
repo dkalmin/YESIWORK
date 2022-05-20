@@ -1,0 +1,21 @@
+{
+  "name": "Codespace to bootstrap valet in a Codespace",
+  //Use base codespace image then pull Valet on postCreateCommand,  
+  "image": "mcr.microsoft.com/vscode/devcontainers/universal:linux",
+  "remoteUser": "codespace",
+	"overrideCommand": false,
+	"mounts": ["source=codespaces-linux-var-lib-docker,target=/var/lib/docker,type=volume"],
+	"runArgs": [
+		"--cap-add=SYS_PTRACE",
+		"--security-opt",
+		"seccomp=unconfined",
+		"--privileged",
+		"--init"
+	],
+	
+	// Add the IDs of extensions you want installed when the container is created.
+	"extensions": [
+		"ms-azuretools.vscode-docker",
+	],
+	"postCreateCommand": "docker login ghcr.io/valet-customers --username ${GITHUB_USER} --password ${VALET_PASSWORD} && docker pull ghcr.io/valet-customers/valet-cli:latest && sudo bash .devcontainer/setenvars.sh ${AZDO_PROJECT} ${AZDO_ORG} ${VALET_PASSWORD} ${AZDO_TOKEN} https://github.com/  || echo 'Could not auto-build. Skipping.' "
+}
